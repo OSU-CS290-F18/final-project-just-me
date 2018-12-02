@@ -55,39 +55,27 @@
             <iframe width="100%" height="130" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/520320777&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
           </p>
           </div>
+          {{#xur}}
           <div class="xur-inventory white-box">
             <h3>Xûr's Inventory</h3>
             <ul id="xurinv">
               <img src="images/engram.png" width="25px;"/>
               <li>
-                <span class="item" id="xurweapon"></span><br/>
+                <span class="item" id="xurweapon">{{xurweapon}}</span><br/>
               </li>
+              {{#xurarmor}}
               <img src="images/engram.png" width="25px;"/>
               <li>
-                <span class="item" id="xurarmor1"></span><br/>
-                <span class="item-perk" id="xurrolls1p1"></span><br>
-                <span class="perk-desc" id="xurrolls1p1desc"></span><br/>
-                <span class="item-perk" id="xurrolls1p2"></span><br>
-                <span class="perk-desc" id="xurrolls1p2desc"></span>
+                <span class="item" id="xurarmor1">{{name}} ({{class}})</span><br/>
+                {{#perks}}
+                <span class="item-perk" id="xurrolls1p1">{{name}}</span><br>
+                <span class="perk-desc" id="xurrolls1p1desc">{{desc}}</span><br/>
+                {{/perks}}
               </li>
-              <img src="images/engram.png" width="25px;"/>
-              <li>
-                <span class="item" id="xurarmor2"></span><br/>
-                <span class="item-perk" id="xurrolls2p1"></span><br>
-                <span class="perk-desc" id="xurrolls2p1desc"></span><br/>
-                <span class="item-perk" id="xurrolls2p2"></span><br>
-                <span class="perk-desc" id="xurrolls2p2desc"></span>
-              </li>
-              <img src="images/engram.png" width="25px;"/>
-              <li>
-                <span class="item" id="xurarmor3"></span><br/>
-                <span class="item-perk" id="xurrolls3p1"></span><br>
-                <span class="perk-desc" id="xurrolls3p1desc"></span><br/>
-                <span class="item-perk" id="xurrolls3p2"></span><br>
-                <span class="perk-desc" id="xurrolls3p2desc"></span>
-              </li>
+              {{/xurarmor}}
             </ul>
           </div>
+          {{/xur}}
 
           <div class="quiz-results button">
             <a href="quiz-results.html">Xûr Quiz Results</a>
@@ -109,30 +97,12 @@
               <h3>Big Fat Fallen</h3>
               <p class="flavor-text">sellin' some planet mats</p>
               <ul id="spiderinv">
+                {{#spiderinventory}}
                 <li>
-                  <span class="item" id="spidermat1"></span><br/>
-                  <span class="item-description" id="spidercost1"></span>
+                  <span class="item" id="spidermat1">{{name}}</span><br/>
+                  <span class="item-description" id="spidercost1">{{cost}}</span>
                 </li>
-                <li>
-                  <span class="item" id="spidermat2"></span><br/>
-                  <span class="item-description" id="spidercost2"></span>
-                </li>
-                <li>
-                  <span class="item" id="spidermat3"></span><br/>
-                  <span class="item-description" id="spidercost3"></span>
-                </li>
-                <li>
-                  <span class="item" id="spidermat4"></span><br/>
-                  <span class="item-description" id="spidercost4"></span>
-                </li>
-                <li>
-                  <span class="item" id="spidermat5"></span><br/>
-                  <span class="item-description" id="spidercost5"></span>
-                </li>
-                <li>
-                  <span class="item" id="spidermat6"></span><br/>
-                  <span class="item-description" id="spidercost6"></span>
-                </li>
+                {{/spiderinventory}}
               </ul>
             </div>
 
@@ -140,14 +110,12 @@
               <h3>Banshee Mods</h3>
               <p class="flavor-text"></p>
               <ul id="bansheeinv">
+                {{#bansheeinventory}}
                 <li>
-                  <span class="item" id="bansheeinv1"></span><br/>
-                  <span class="item-description" id="bansheedesc1"></span>
+                  <span class="item" id="bansheeinv1">{{name}}</span><br/>
+                  <span class="item-description" id="bansheedesc1">{{desc}}</span>
                 </li>
-                <li>
-                  <span class="item" id="bansheeinv2"></span><br/>
-                  <span class="item-description" id="bansheedesc2"></span>
-                </li>
+                {{/bansheeinventory}}
               </ul>
             </div>
 

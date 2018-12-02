@@ -1,41 +1,5 @@
 fetch('data.json').then((response) => {
     response.text().then((text) => {
-        let data = JSON.parse(text);
-
-        if (document.getElementById('xurinv')) {
-            if (data.xur) {
-                document.getElementById('xurweapon').innerText = data.xur.xurweapon;
-                data.xur.xurarmor.forEach((a, i) => {
-                    document.getElementById('xurarmor' + (i + 1)).innerText = a.name + ' (' + a.class + ')';
-                    console.log(a.name + '(' + a.class + ')');
-                    document.getElementById('xurrolls' + (i + 1) + 'p1').innerText = a.perks[0]['name'];
-                    document.getElementById('xurrolls' + (i + 1) + 'p1desc').innerText = a.perks[0]['desc'];
-                    document.getElementById('xurrolls' + (i + 1) + 'p2').innerText = a.perks[1]['name'];
-                    document.getElementById('xurrolls' + (i + 1) + 'p2desc').innerText = a.perks[1]['desc'];
-                });
-            } else {
-                document.getElementById('xurinv').parentElement.style.display = 'none';
-            }
-        }
-
-        if (document.getElementById('spiderinv')) {
-            data.spiderinventory.forEach((s, i) => {
-                if (s.name == 'Datalattice') {
-                    s.name = 'Data Lettuce';
-                }
-                console.log(s);
-                document.getElementById('spidermat' + (i + 1)).innerText = s.name;
-                document.getElementById('spidercost' + (i + 1)).innerText = s.cost;
-            });
-        }
-
-        if (document.getElementById('bansheeinv')) {
-            data.bansheeinventory.forEach((m, i) => {
-                document.getElementById('bansheeinv' + (i + 1)).innerText = m.name;
-                document.getElementById('bansheedesc' + (i + 1)).innerText = m.desc;
-            });    
-        }
-
         if (document.getElementById('dailies')) {
             let dailies = ['Gambit', 'Crucible', 'Heroic Adventure', 'Strikes'];
             let firstResetTime = 1539277200;
