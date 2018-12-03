@@ -30,12 +30,12 @@
 <body>
 
   <div class="content">
-    <a href="index.html"><div class="logo"></div></a>
+    <a href="index"><div class="logo"></div></a>
     <nav>
       <ul class="main-menu">
-        <li><a href="index.html">Xûr</a></li>
-        <li><a href="spider.html">Spider</a></li>
-        <li><a href="guides.html">Guides</a></li>
+        <li><a href="index">Xûr</a></li>
+        <li><a href="spider">Spider</a></li>
+        <li><a href="guides">Guides</a></li>
         <!--<li><a href="faq.html">FAQ</a></li>-->
       </ul>
     </nav>
@@ -51,7 +51,9 @@
         <div id="ascendant-challenge" class="guide-section">
           <div class="weekly-challenge white-box">
             <h2>This Week's Challenge</h2>
-            <a href="" id="current-ascendant" class="current-ascendant flavor-text"></a>
+            {{#ac}}
+            <a href="#ac{{id}}" id="current-ascendant" class="current-ascendant flavor-text">{{text}}</a>
+            {{/ac}}
           </div>
           <div class="a-challenges guide-list">
             <h1>Ascendant Challenges</h1>
@@ -122,8 +124,10 @@
         <div id="escalation-protocol" class="guide-section">
           <div class="weekly-ep white-box">
             <h2>This Week's Weapon / Boss</h2>
-            <a href="" id="epboss" class="current-ep flavor-text"></a>
-            <h4 id="epgun"></h4>
+            {{#ep}}
+            <a href="#ep{{id}}" id="epboss" class="current-ep flavor-text">{{boss}}</a>
+            <h4 id="epgun">{{gun}}</h4>
+            {{/ep}}
           </div>
           <div class="ep-bosses guide-list">
             <h1>Escalation Protocol</h1>
@@ -168,7 +172,9 @@
         <div id="blind-well" class="guide-section">
           <div class="weekly-bw white-box">
             <h2>This Week's Heroic Boss</h2>
-            <a href="" id="wellboss" class="current-bw flavor-text"></a>
+            {{#bw}}
+            <a href="#bw{{id}}" id="wellboss" class="current-bw flavor-text">{{text}}</a>
+            {{/bw}}
           </div>
           <div class="bw-bosses guide-list">
             <h1>Blind Well Heroic</h1>
@@ -187,9 +193,9 @@
       <div class="footer-top">
         <nav>
           <ul class="footer-menu">
-            <li><a href="faq.html">FAQ</a></li>
-            <li><a href="archives.html">Archives</a></li>
-            <li><a href="privacy-policy.html">Privacy</a></li>
+            <li><a href="faq">FAQ</a></li>
+            <li><a href="archives">Archives</a></li>
+            <li><a href="privacy-policy">Privacy</a></li>
           </ul>
         </nav>
         <p>Are you a developer? Web designer? Drift-wood sculptor? <a href="https://en.wikipedia.org/wiki/Hype_man" target="blank">Hype Man</a> for an up-and-coming rapper? Want to work on the site and get weird? Join the scrappy go-getters in the <a href="https://discord.gg/Ut4qTZp" target="_blank">King of Xûr</a> Discord. </p>

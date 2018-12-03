@@ -22,9 +22,43 @@ bungiefetch().then((bungiedata) => {
     app.set('view engine', 'html');
     app.set('views', __dirname + '/views'); // you can change '/views' to '/public',
 
+    console.log(bungiedata);
+
     app.get('/', (req, res) => {
         res.render('index', bungiedata);
     });
+
+    app.get('/index', (req, res) => {
+        res.render('index', bungiedata);
+    });
+
+    app.get('/spider', (req, res) => {
+        res.render('spider', bungiedata);
+    })
+
+    app.get('/guides', (req, res) => {
+        res.render('guides', bungiedata);
+    })
+    
+    var options = {
+        root: __dirname + '/public/'
+    }    
+
+    app.get('/archives', (req, res) => {
+        res.sendFile('archives.html', options);
+    })
+
+    app.get('/faq', (req, res) => {
+        res.sendFile('faq.html', options);
+    })
+
+    app.get('/privacy-policy', (req, res) => {
+        res.sendFile('privacy-policy.html', options);
+    })
+
+    app.get('/🤔', (req, res) => {
+        res.sendFile('/🤔.html', options);
+    })
 
     app.use(express.static('public'));
 
@@ -138,7 +172,7 @@ async function bungiefetch() {
                     for (let skey in itemsockets) {
                         let s = itemsockets[skey];
                         if (s.reusablePlugItems.length > 0 && s.plugSources == 2) {
-                            plugs.append(s.reusablePlugItems[0].plugItemHash);
+                            plugs.push(s.reusablePlugItems[0].plugItemHash);
                         }
                     }
 
@@ -148,7 +182,7 @@ async function bungiefetch() {
                         let p = plugs[pkey];
                         let plugurl = 'https://www.bungie.net/platform/Destiny2/Manifest/DestinyInventoryItemDefinition/' + p + '/';
                         let plugopts = {
-                            headers: header,
+                            headers: headers,
                             json: true
                         }
                         let plugresp = await request.get(plugurl, plugopts);
@@ -240,6 +274,48 @@ async function bungiefetch() {
             bungiedata.activenightfalls.push(nightfallname);
         }
     }
-    console.log(bungiedata);
+
+    let firstResetTime = 1539709200;
+    let currentTime = Math.floor((new Date()).getTime() / 1000);
+    let secondsSinceFirst = currentTime - firstResetTime;
+    let daysSinceFirst = Math.floor(secondsSinceFirst / 86400);
+    let weeksSinceFirst = Math.floor(secondsSinceFirst / 604800);
+
+    let dailies = ['Crucible', 'Heroic Adventure', 'Strikes', 'Gambit'];
+    let challenges = ['#1: Ouroborea', '#2: Forfeit Shrine', '#3: Shattered Ruins', '#4: Keep of Honed Edges', '#5: Agonarch Abyss', '#6: Cimmerian Garrison'];
+    let epbosses = ['Naksud, the Famine', 'Bok Litur, Hunger of Xol', 'Nur Abath, Crest of Xol', 'Kathok, Roar of Xol', 'Damkath, the Mask'];
+    let epguns = ['Every IKELOS gun', 'Every IKELOS gun', 'IKELOS_SG_v1.0.1 (Shotgun)', 'IKELOS_SMG_v1.0.0 (SMG)', 'IKELOS_SR_v1.0.1 (Sniper)'];
+    let wellbosses = ['Sikariis and Varkuuriis, Plagues of the Well', 'Cragur, Plague of the Well', 'Inomia, Plague of the Well'];
+
+    bungiedata.dailies = {
+        current: dailies[daysSinceFirst % 4],
+        next: [dailies[(daysSinceFirst + 1) % 4], dailies[(daysSinceFirst + 2) % 4], dailies[(daysSinceFirst + 3) % 4]]
+    }
+
+    bungiedata.dailies.next.push({
+        daily: dailies[(daysSinceFirst + 1) % 4]
+    })
+    bungiedata.dailies.next.push({
+        daily: dailies[(daysSinceFirst + 2) % 4]
+    })
+    bungiedata.dailies.next.push({
+        daily: dailies[(daysSinceFirst + 3) % 4]
+    })
+
+    bungiedata.ac = {
+        text: challenges[weeksSinceFirst % 6],
+        id: weeksSinceFirst % 6
+    }
+    bungiedata.ep = {
+        boss: epbosses[weeksSinceFirst % 5],
+        gun: epguns[weeksSinceFirst % 5],
+        id: weeksSinceFirst % 5
+    }
+    bungiedata.bw = {
+        text: wellbosses[weeksSinceFirst % 3],
+        id: weeksSinceFirst % 3
+    }
+
+    return bungiedata;
 }
 
