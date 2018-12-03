@@ -18,15 +18,26 @@ function newTodo() {
         alert('Your offset must be less than your interval!')
     }
 
+    intervalInput = Number(intervalInput);
+    offsetInput = Number(offsetInput);
+
+    let originDate = 1536080400;
+    let currentTime = Math.floor((new Date()).getTime() / 1000);
+    let secondsSinceFirst = currentTime - originDate;
+    let weeksSinceFirst = Math.floor(secondsSinceFirst / 604800);  
+    console.log((weeksSinceFirst % intervalInput) + offsetInput);   
+    
+    offsetInput = ((weeksSinceFirst % intervalInput) + offsetInput) % intervalInput;
+
+    console.log(offsetInput);
     const http = new XMLHttpRequest();
     const url = '/newtodo'
     http.open('POST', url);
     http.addEventListener('load', event => {
         if (event.target.status === 200) {
-            let originDate = 1536080400;
-            let currentTime = Math.floor((new Date()).getTime() / 1000);
-            let secondsSinceFirst = currentTime - originDate;
-            let weeksSinceFirst = Math.floor(secondsSinceFirst / 604800);     
+            document.getElementById('todo-text-input').value = '';
+            document.getElementById('todo-interval-input').value = '';
+            document.getElementById('todo-offset-input').value = '';
             
             let todo = null;
 
@@ -61,9 +72,9 @@ function newTodo() {
     })
 
     let body = {
-        text: document.getElementById('todo-text-input').value.trim(),
-        interval: document.getElementById('todo-interval-input').value.trim(),
-        offset: document.getElementById('todo-offset-input').value.trim()
+        text: textInput,
+        interval: intervalInput,
+        offset: offsetInput
     }
 
     http.setRequestHeader('Content-type', 'application/json');
