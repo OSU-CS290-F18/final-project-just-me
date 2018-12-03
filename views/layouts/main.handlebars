@@ -16,15 +16,19 @@
   <meta name="keywords" content="xur,destiny,destinythegame,whereisxur,destiny 2,D2">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Spider | Destiny 2</title>
+  <title>Where the Fuck is Xur?</title>
   <link rel="icon" type="image/png" href="/images/xur32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/images/xur16.png" sizes="16x16">
   <link rel="icon" type="image/png" href="favicon.png"/>
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&effect=anaglyph" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Maven+Pro:900|Raleway:900" rel="stylesheet">
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.runtime.js" defer></script>
+
+  <script src="/templates.js" defer></script>
+
   <link rel="stylesheet" type="text/css" href="styles.css">
-  <script src="index.js"></script>
+  <script src="index.js" defer></script>
 </head>
 
 <body>
@@ -35,26 +39,12 @@
         <li><a href="index">Xûr</a></li>
         <li><a href="spider">Spider</a></li>
         <li><a href="guides">Guides</a></li>
+        <li><a href="todo">To-Do</a></li>
         <!--<li><a href="faq.html">FAQ</a></li>-->
       </ul>
     </nav>
     <div class="container">
-      <div class="spider">
-        <h1>Big Fat Fallen</h1>
-        <p class="flavor-text">sellin' some planet mats</p>
-
-        <div class="spider-inventory white-box">
-          <h3>Spider's Inventory</h3>
-          <ul id="spiderinv">
-            {{#spiderinventory}}
-            <li>
-              <span class="item">{{name}}</span><br/>
-              <span class="item-description">{{cost}}</span>
-            </li>
-            {{/spiderinventory}}
-          </ul>
-        </div>
-      </div>
+        {{{body}}}
     </div>
     <footer>
       <div class="footer-top">

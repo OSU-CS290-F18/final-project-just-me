@@ -1,0 +1,27 @@
+<div class="guide-menu">
+    <button onclick="showAdd()" class="add-todo">Add To-Do</button>
+    <div id="add-todo" class="hidden">
+        <p class="todo-input-text">To-Do Text</p>
+        <input type="text" id="todo-text-input" class="todo-input-field">
+        <p class="todo-input-text">How often should the to-do show up?</p>
+        <input type="number" id="todo-interval-input" class="todo-input-field">
+        <p class="todo-input-text">How many weeks until the to-do first shows up?</p>
+        <input type="number" id="todo-offset-input" class="todo-input-field">
+        <button class="todo-confirm" onclick="newTodo()">Confirm</button>
+    </div>
+    <a href="/logout">Logout</a>
+</div>
+<div class="guides-container">
+    <h1>Active To-Do's</h1>
+    <div id="actives">
+        {{#each activetodos}}
+            {{> todoPartial}}
+        {{/each}}
+    </div>
+    <button onclick="showInactives()" id="show-inactive" class="show-inactive">Show Inactive To-Do's</button>
+    <div id="inactives" class="hidden">
+        {{#each inactivetodos}}
+            {{> todoPartial}}
+        {{/each}}
+    </div>
+</div>

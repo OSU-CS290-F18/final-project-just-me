@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "build": "handlebars views/partials/todoPartial.handlebars -f public/templates.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,7 +18,11 @@
   },
   "homepage": "https://github.com/OSU-CS290-F18/final-project-just-me#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "connect-mongo": "^2.0.2",
     "express": "^4.16.4",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.15.6",
     "mustache-express": "^1.2.8",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5"

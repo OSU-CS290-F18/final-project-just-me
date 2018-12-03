@@ -1,0 +1,16 @@
+<div class="spider">
+  <h1>Big Fat Fallen</h1>
+  <p class="flavor-text">sellin' some planet mats</p>
+
+  <div class="spider-inventory white-box">
+    <h3>Spider's Inventory</h3>
+    <ul id="spiderinv">
+      {{#each spiderinventory}}
+      <li>
+        <span class="item">{{name}}</span><br/>
+        <span class="item-description">{{cost}}</span>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,96 @@
+<div class="row">
+  <div id="xur">
+    <h1>Okay you all already know Xur's gone for the week.</h1>
+    <p class="xur-location-details">But does anyone actually know where he goes?  Does he chill with the nine?  Does he have a house?  This stuff keeps me up at night man.</p>
+    <p class="last-updated">Updated Tuesday, 12/4</p>
+    {{#if xur}}
+    <div class="xur-inventory white-box">
+      <h3>Xûr's Inventory</h3>
+      <ul id="xurinv">
+        <img src="images/engram.png" width="25px;"/>
+        <li>
+          <span class="item">{{xur.xurweapon}}</span><br/>
+        </li>
+        {{#each xur.xurarmor}}
+        <img src="images/engram.png" width="25px;"/>
+        <li>
+          <span class="item">{{name}} ({{class}})</span><br/>
+          {{#each perks}}
+          <span class="item-perk">{{name}}</span><br>
+          <span class="perk-desc">{{desc}}</span><br/>
+          {{/each}}
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+    {{/if}}
+
+    <div class="hotline white-box">
+      <h3>Xûr Hotline</h3>
+      <p class="flavor-text">Mind and spirit. Call now and hear the future. <br/>Xûr has the answers you seek. It's an answering machine. Leave a goddamn message. </p>
+      <h4><a class="hotline-number" href="tel:1-414-436-9013">1 (414) 436-9013</a></h4>
+    </div>
+  </div>
+
+  <div class="not-xur">
+    <div class="spider-home white-box">
+      <h3>Big Fat Fallen</h3>
+      <p class="flavor-text">sellin' some planet mats</p>
+      <ul id="spiderinv">
+        {{#each spiderinventory}}
+        <li>
+          <span class="item">{{name}}</span><br/>
+          <span class="item-description">{{cost}}</span>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <div class="banshee white-box">
+      <h3>Banshee Mods</h3>
+      <p class="flavor-text"></p>
+      <ul id="bansheeinv">
+        {{#each bansheeinventory}}
+        <li>
+          <span class="item">{{name}}</span><br/>
+          <span class="item-description">{{desc}}</span>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <div class="dailies white-box">
+      <h3>Dailies</h3>
+      <p class="flavor-text"></p>
+      <ul id="dailies">
+        <li class="dailies-today item">{{dailies.current}}</li>
+        <li class="dailies-and-then">And then...</li>
+        {{#each dailies.next}}
+        <li class="dailies-future sub-item">{{daily}}</li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <div class="white-box">
+      <h3>Active Nightfalls</h3>
+      <p class="flavor-text"></p>
+      <ul id="nightfalls">
+        {{#each activenightfalls}}
+        <li class="nightfall item">{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <div class="news">
+      <h5 class="line-header">What The Fuck is New?</h5>
+      <p>Jonathan has been hard at work trying to not fail his web dev final project!</p>
+      <p>
+        <ul>
+          <li>New todo feature!</li>
+          <li>Express based backend!</li>
+          <li>Hi Professor Hess!</li>
+        </ul>
+      </p>
+    </div>
+  </div>
+</div>

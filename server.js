@@ -1,71 +1,248 @@
 const express = require('express');
-const mustacheExpress = require('mustache-express');
+const exphbs = require('express-handlebars');
 const fs = require('fs');
 const request = require('request-promise-native');
+const MongoClient = require('mongodb').MongoClient;
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+var bodyParser = require('body-parser');
 
 const app = express();
-const port = 3000;
+const port = 4200;
 
-if (!fs.existsSync('config.json')) {
-    throw "No config.json, can't run";
-}
+const dburl = 'mongodb://127.0.0.1:27017';
+
+const dbname = 'wherethefuckisxur';
 
 let config = JSON.parse(fs.readFileSync('config.json'));
-
+    
 if (config.token.expires < (new Date).getTime() / 1000) {
     throw "Refresh token expired, please get a new one!";
 }
 
-bungiefetch().then((bungiedata) => {
-    app.engine('html', mustacheExpress());
+MongoClient.connect(dburl, (err, client) => {
+    const db = client.db(dbname);
 
-    app.set('view engine', 'html');
-    app.set('views', __dirname + '/views'); // you can change '/views' to '/public',
-
-    console.log(bungiedata);
-
-    app.get('/', (req, res) => {
-        res.render('index', bungiedata);
-    });
-
-    app.get('/index', (req, res) => {
-        res.render('index', bungiedata);
-    });
-
-    app.get('/spider', (req, res) => {
-        res.render('spider', bungiedata);
-    })
-
-    app.get('/guides', (req, res) => {
-        res.render('guides', bungiedata);
-    })
+    if (!fs.existsSync('config.json')) {
+        throw "No config.json, can't run";
+    }
     
-    var options = {
-        root: __dirname + '/public/'
-    }    
+    bungiefetch().then((bungiedata) => {
 
-    app.get('/archives', (req, res) => {
-        res.sendFile('archives.html', options);
-    })
+        app.use(bodyParser.json());
+        
+        app.use(session({
+            store: new MongoStore({
+                db: db
+            }),
+            secret: 'supersecretsecret'
+        }))
+    
+        app.engine('handlebars', exphbs({
+            defaultLayout: 'main'
+        }));
+    
+        app.set('view engine', 'handlebars');
+    
+        console.log(bungiedata);
+    
+        app.get('/', (req, res) => {
+            res.render('index', bungiedata);
+            req.session.test = true;
+        });
+    
+        app.get('/index', (req, res) => {
+            res.render('index', bungiedata);
+        });
+    
+        app.get('/spider', (req, res) => {
+            res.render('spider', bungiedata);
+        })
+    
+        app.get('/guides', (req, res) => {
+            res.render('guides', bungiedata);
+        })
 
-    app.get('/faq', (req, res) => {
-        res.sendFile('faq.html', options);
-    })
+        app.get('/todo', (req, res) => {
+            if (req.session.membershipId) {
+                db.collection('memberships').findOne({membershipId: req.session.membershipId}).then(doc => {
+                    tododata = {
+                        activetodos: [],
+                        inactivetodos: []
+                    }
 
-    app.get('/privacy-policy', (req, res) => {
-        res.sendFile('privacy-policy.html', options);
-    })
+                    let originDate = 1536080400;
+                    let currentTime = Math.floor((new Date()).getTime() / 1000);
+                    let secondsSinceFirst = currentTime - originDate;
+                    let weeksSinceFirst = Math.floor(secondsSinceFirst / 604800);     
+                    
+                    doc.todos.forEach(todo => {
+                        if (weeksSinceFirst % todo.interval == todo.offset) {
+                            tododata.activetodos.push({
+                                text: todo.text,
+                                weeksUntilNext: todo.interval,
+                                inactive: false
+                            })
+                        } else {
+                            tododata.inactivetodos.push({
+                                text: todo.text,
+                                weeksUntilNext: (todo.interval - (weeksSinceFirst % todo.interval) + todo.offset) % todo.interval,
+                                inactive: true
+                            })
+                        }
+                    })
+                    
+                    res.render('todo', tododata);
+                })
+            } else {
+                res.render('login', {
+                    clientid: config.api.id
+                });
+            }
+        })
 
-    app.get('/🤔', (req, res) => {
-        res.sendFile('/🤔.html', options);
-    })
+        app.post('/newtodo', (req, res) => {
+            if (req.session.membershipId) {
+                db.collection('memberships').findOne({membershipId: req.session.membershipId}).then(doc => {
+                    let contains = false;
+                    doc.todos.forEach(todo => {
+                        if (todo.text == req.body.text) {
+                            contains = true;
+                        }
+                    })
+                    if (contains) {
+                        res.status(409).send();
+                    } else {
+                        db.collection('memberships').updateOne({membershipId: req.session.membershipId},
+                            {
+                                $push: {todos: req.body}
+                            }, (err, result) => {
+                                if (err) {
+                                    res.status(500).send();
+                                } else {
+                                    res.status(200).send();
+                                }
+                            })        
+                    }
+                })
+            } else {
+                res.status(401).send();
+            }
+        })
 
-    app.use(express.static('public'));
+        app.delete('/deletetodo', (req, res) => {
+            if (req.session.membershipId) {
+                db.collection('memberships').updateOne({membershipId: req.session.membershipId}, {
+                    $pull: {
+                        todos: {
+                            text: req.body.text
+                        }
+                    }
+                }, (err, result) => {
+                    res.status(200).send();
+                })
+            } else {
+                res.status(401).send();
+            }
+        })
 
-    app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-}, (err) => {
-    console.log(err);
+        app.get('/redirect', (req, res) => {
+            let code = req.query.code;
+
+            let headers = {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+
+            let tokenurl = 'https://www.bungie.net/platform/app/oauth/token/';
+            let tokenopts = {
+                headers: headers,
+                form: {
+                    grant_type: 'authorization_code',
+                    code: code,
+                    client_id: config.api.id,
+                    client_secret: config.api.secret
+                },
+                json: true
+            };
+
+            request.post(tokenurl, tokenopts).then(token => {
+                req.session.membershipId = token.membership_id;
+
+                db.collection('memberships').findOne({membershipId: token.membership_id}).then(doc => {
+                    if (!doc) {
+                        db.collection('memberships').insertOne({
+                            membershipId: token.membership_id,
+                            todos: [
+                                {
+                                    text: "Shattered Throne is open!",
+                                    interval: 3,
+                                    offset: 0
+                                },
+                                {
+                                    text: "Beat Ascendant Challenge #2's time trial",
+                                    interval: 6,
+                                    offset: 1
+                                },
+                                {
+                                    text: "Beat Ascendant Challenge #1's time trial",
+                                    interval: 6,
+                                    offset: 0
+                                },
+                                {
+                                    text: 'Escalation Protocol boss drops the Shotgun!',
+                                    interval: 5,
+                                    offset: 3
+                                }
+                            ]
+                        })
+                    }
+                });
+
+                res.redirect('/todo');
+            }).catch(err => {
+                console.log(err);
+
+                res.redirect('/todo');
+            });
+        })
+
+        app.get('/logout', (req, res) => {
+            delete req.session.membershipId;
+            res.redirect('/todo');
+        })
+    
+        app.get('/archives', (req, res) => {
+            res.render('archives', bungiedata);
+        })
+    
+        app.get('/faq', (req, res) => {
+            res.render('faq', bungiedata);
+        })
+    
+        app.get('/privacy-policy', (req, res) => {
+            res.render('privacy-policy', bungiedata);
+        })
+                
+        var options = {
+            root: __dirname + '/public/'
+        }    
+    
+        app.get('/🤔', (req, res) => {
+            res.sendFile('/🤔.html', options);
+        })
+    
+        app.use(express.static('public'));
+
+        app.get('*', (req, res) => {
+            res.status(404).render('404');
+        })
+    
+        app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+    }, (err) => {
+        console.log(err);
+    })    
 })
+
 
 async function bungiefetch() {
     let refreshurl = 'https://www.bungie.net/platform/app/oauth/token/';
@@ -176,9 +353,11 @@ async function bungiefetch() {
                         }
                     }
 
+                    plugs = plugs.splice(2);
+
                     let perks = [];
 
-                    for (let pkey in plugs.slice(2)) {
+                    for (let pkey in plugs) {
                         let p = plugs[pkey];
                         let plugurl = 'https://www.bungie.net/platform/Destiny2/Manifest/DestinyInventoryItemDefinition/' + p + '/';
                         let plugopts = {
