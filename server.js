@@ -7,6 +7,8 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var bodyParser = require('body-parser');
 
+var data;
+
 const app = express();
 const port = 4200;
 
@@ -27,7 +29,9 @@ MongoClient.connect(dburl, (err, client) => {
         throw "No config.json, can't run";
     }
     
-    bungiefetch().then((bungiedata) => {
+    bungiefetch().then(() => {
+
+        nextFetch();
 
         app.use(bodyParser.json());
         
@@ -43,24 +47,22 @@ MongoClient.connect(dburl, (err, client) => {
         }));
     
         app.set('view engine', 'handlebars');
-    
-        console.log(bungiedata);
-    
+        
         app.get('/', (req, res) => {
-            res.render('index', bungiedata);
+            res.render('index', data);
             req.session.test = true;
         });
     
         app.get('/index', (req, res) => {
-            res.render('index', bungiedata);
+            res.render('index', data);
         });
     
         app.get('/spider', (req, res) => {
-            res.render('spider', bungiedata);
+            res.render('spider', data);
         })
     
         app.get('/guides', (req, res) => {
-            res.render('guides', bungiedata);
+            res.render('guides', data);
         })
 
         app.get('/todo', (req, res) => {
@@ -212,15 +214,15 @@ MongoClient.connect(dburl, (err, client) => {
         })
     
         app.get('/archives', (req, res) => {
-            res.render('archives', bungiedata);
+            res.render('archives', data);
         })
     
         app.get('/faq', (req, res) => {
-            res.render('faq', bungiedata);
+            res.render('faq', data);
         })
     
         app.get('/privacy-policy', (req, res) => {
-            res.render('privacy-policy', bungiedata);
+            res.render('privacy-policy', data);
         })
                 
         var options = {
@@ -495,6 +497,28 @@ async function bungiefetch() {
         id: weeksSinceFirst % 3
     }
 
-    return bungiedata;
+    console.log(bungiedata);
+
+    data = bungiedata;
 }
 
+function nextFetch() {
+    let currentMs = (new Date()).getTime();
+    let msThroughDay = currentMs % 86400000;
+    if (msThroughDay > 61200000) {
+        console.log(86400000 - msThroughDay);
+        setTimeout(() => {
+            bungiefetch().then(() => {
+                nextFetch();
+            })
+        }, 86400000 - msThroughDay)
+    } else {
+
+        console.log(61200000 - msThroughDay);
+        setTimeout(() => {
+            bungiefetch().then(() => {
+                nextFetch();
+            })
+        }, 61200000 - msThroughDay)
+    }
+}
